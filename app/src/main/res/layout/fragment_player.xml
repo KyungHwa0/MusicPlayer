@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/top_backgroind_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/primary"
+        app:layout_constraintVertical_weight="3"
+        app:layout_constraintBottom_toTopOf="@id/bottom_backgroind_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <View
+        android:id="@+id/bottom_backgroind_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintVertical_weight="2"
+        app:layout_constraintTop_toBottomOf="@id/top_backgroind_view"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/track_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="노래제목입니다."
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginTop="36dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="재생목록"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginTop="36dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/track_singer_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="가수이름"
+        android:textSize="15sp"
+        android:textColor="@color/gray"
+        android:layout_marginTop="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/track_title_tv"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="H, 1:1"
+        android:layout_marginStart="36dp"
+        android:layout_marginEnd="36dp"
+        android:translationY="50dp"
+        app:cardElevation="10dp"
+        app:cardCornerRadius="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/top_backgroind_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/track_cover_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:background="#77C678" />
+
+    </androidx.cardview.widget.CardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/play_list_rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/player_view" />
+
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/player_view"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        android:alpha="0"
+        app:use_controller="false"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <SeekBar
+        android:id="@+id/player_seekbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="30dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:maxHeight="4dp"
+        android:minHeight="4dp"
+        android:progressDrawable="@drawable/player_seek_background"
+        android:thumb="@drawable/player_seek_thumb"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/player_view"
+        tools:progress="40" />
+
+    <SeekBar
+        android:id="@+id/play_list_seekbar"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:clickable="false"
+        tools:progress="40"
+        android:progressTint="@color/red"
+        android:thumbTint="@color/red"
+        app:layout_constraintTop_toTopOf="@id/player_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/play_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/red"
+        app:layout_constraintTop_toBottomOf="@id/player_seekbar"
+        app:layout_constraintStart_toStartOf="@id/player_seekbar"
+        tools:text="0:00" />
+
+    <TextView
+        android:id="@+id/total_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/gray"
+        app:layout_constraintTop_toBottomOf="@id/player_seekbar"
+        app:layout_constraintEnd_toEndOf="@id/player_seekbar"
+        tools:text="0:00" />
+
+    <ImageView
+        android:id="@+id/player_play_iv"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_player_play_48"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/player_view"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <ImageView
+        android:id="@+id/player_next_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_player_next_48"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toEndOf="@id/player_play_iv"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/player_play_iv"
+        app:layout_constraintBottom_toBottomOf="@id/player_play_iv"/>
+
+    <ImageView
+        android:id="@+id/player_prev_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_player_next_48"
+        app:layout_constraintHorizontal_bias="0.8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/player_play_iv"
+        app:layout_constraintTop_toTopOf="@id/player_play_iv"
+        app:layout_constraintBottom_toBottomOf="@id/player_play_iv"/>
+
+    <ImageView
+        android:id="@+id/player_list_iv"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_player_list_48"
+        android:layout_marginStart="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/player_play_iv"
+        app:layout_constraintBottom_toBottomOf="@id/player_play_iv"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

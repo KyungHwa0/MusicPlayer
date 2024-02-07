@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.view.isVisible
 import com.wack.musicplayer.R
+import com.wack.musicplayer.databinding.FragmentPlayerBinding
 import com.wack.musicplayer.model.MusicDto
 import com.wack.musicplayer.service.MusicService
 import retrofit2.Call
@@ -15,10 +17,25 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
+    private var binding: FragmentPlayerBinding? = null
+    private var isWatchingPlayListView = true
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val fragmentPlayerBinding = FragmentPlayerBinding.bind(view)
+        binding = fragmentPlayerBinding
+
+        initPlayListBtn(fragmentPlayerBinding)
         getVideoListFromServer()
+    }
+
+    private fun initPlayListBtn(fragmentPlayerBinding: FragmentPlayerBinding) {
+        fragmentPlayerBinding.playerListIv.setOnClickListener {
+            fragmentPlayerBinding.playerViewGroup.isVisible = isWatchingPlayListView
+            fragmentPlayerBinding.playListViewGroup.isVisible = isWatchingPlayListView.not()
+
+            isWatchingPlayListView =! isWatchingPlayListView
+        }
     }
 
     private fun getVideoListFromServer() {

@@ -5,23 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/player_view_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:constraint_referenced_ids="track_title_tv, track_singer_tv, track_cover_card_view, bottom_background_view, player_seekbar, play_time_tv, total_time_tv" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/play_list_view_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="title_tv, play_list_rv, play_list_seekbar"/>
+
     <View
-        android:id="@+id/top_backgroind_view"
+        android:id="@+id/top_background_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/primary"
         app:layout_constraintVertical_weight="3"
-        app:layout_constraintBottom_toTopOf="@id/bottom_backgroind_view"
+        app:layout_constraintBottom_toTopOf="@id/bottom_background_view"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <View
-        android:id="@+id/bottom_backgroind_view"
+        android:id="@+id/bottom_background_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintVertical_weight="2"
-        app:layout_constraintTop_toBottomOf="@id/top_backgroind_view"
+        app:layout_constraintTop_toBottomOf="@id/top_background_view"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -65,6 +79,7 @@
         app:layout_constraintTop_toBottomOf="@id/track_title_tv"/>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/track_cover_card_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="H, 1:1"
@@ -73,7 +88,7 @@
         android:translationY="50dp"
         app:cardElevation="10dp"
         app:cardCornerRadius="5dp"
-        app:layout_constraintBottom_toBottomOf="@id/top_backgroind_view"
+        app:layout_constraintBottom_toBottomOf="@id/top_background_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 

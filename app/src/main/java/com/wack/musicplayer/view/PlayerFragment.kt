@@ -7,6 +7,7 @@ import android.view.View
 import androidx.core.view.isVisible
 import com.wack.musicplayer.R
 import com.wack.musicplayer.databinding.FragmentPlayerBinding
+import com.wack.musicplayer.helper.mapper
 import com.wack.musicplayer.model.MusicDto
 import com.wack.musicplayer.service.MusicService
 import retrofit2.Call
@@ -31,6 +32,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private fun initPlayListBtn(fragmentPlayerBinding: FragmentPlayerBinding) {
         fragmentPlayerBinding.playerListIv.setOnClickListener {
+            //todo 만약에 서버에서 데이터가 다 불러오지 않은 상태 일 때
             fragmentPlayerBinding.playerViewGroup.isVisible = isWatchingPlayListView
             fragmentPlayerBinding.playListViewGroup.isVisible = isWatchingPlayListView.not()
 
@@ -50,6 +52,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     .enqueue(object : Callback<MusicDto> {
                         override fun onResponse(call: Call<MusicDto>, response: Response<MusicDto>) {
                             Log.d("PlayerFragment", "${response.body()}")
+
+                            response.body()?.let {
+                                val modelList = it.music.mapIndexed { index, musicEntity ->
+                                    musicEntity.mapper(index.toLong())
+                                }
+                            }
                         }
 
                         override fun onFailure(call: Call<MusicDto>, t: Throwable) {

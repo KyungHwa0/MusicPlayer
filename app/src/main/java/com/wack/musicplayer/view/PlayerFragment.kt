@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.wack.musicplayer.R
 import com.wack.musicplayer.databinding.FragmentPlayerBinding
 import com.wack.musicplayer.helper.mapper
@@ -20,6 +21,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private var binding: FragmentPlayerBinding? = null
     private var isWatchingPlayListView = true
+    private lateinit var playListAdapter: PlayListAdapter
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -27,7 +29,19 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         binding = fragmentPlayerBinding
 
         initPlayListBtn(fragmentPlayerBinding)
+        initRecyclerView(fragmentPlayerBinding)
         getVideoListFromServer()
+    }
+
+    private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {
+        playListAdapter = PlayListAdapter {
+            //todo 음악 재생
+        }
+
+        fragmentPlayerBinding.playListRv.apply {
+            adapter = playListAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
     }
 
     private fun initPlayListBtn(fragmentPlayerBinding: FragmentPlayerBinding) {
@@ -57,6 +71,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                                 val modelList = it.music.mapIndexed { index, musicEntity ->
                                     musicEntity.mapper(index.toLong())
                                 }
+                                playListAdapter.submitList(modelList)
                             }
                         }
 

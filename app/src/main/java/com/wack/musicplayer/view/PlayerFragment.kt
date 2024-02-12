@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.annotation.OptIn
 import androidx.core.view.isVisible
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.SimpleExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wack.musicplayer.R
 import com.wack.musicplayer.databinding.FragmentPlayerBinding
@@ -22,15 +25,28 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private var binding: FragmentPlayerBinding? = null
     private var isWatchingPlayListView = true
     private lateinit var playListAdapter: PlayListAdapter
+    private var player: SimpleExoPlayer? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val fragmentPlayerBinding = FragmentPlayerBinding.bind(view)
         binding = fragmentPlayerBinding
 
+        initPlayView(fragmentPlayerBinding)
         initPlayListBtn(fragmentPlayerBinding)
         initRecyclerView(fragmentPlayerBinding)
         getVideoListFromServer()
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun initPlayView(fragmentPlayerBinding: FragmentPlayerBinding) {
+
+        //초기화
+        context?.let {
+            player = SimpleExoPlayer.Builder(it).build()
+        }
+        fragmentPlayerBinding.playerView.player = player
     }
 
     private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {

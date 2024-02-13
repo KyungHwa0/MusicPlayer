@@ -4,15 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.View
-import androidx.annotation.OptIn
 import androidx.core.view.isVisible
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.SimpleExoPlayer
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wack.musicplayer.R
 import com.wack.musicplayer.databinding.FragmentPlayerBinding
 import com.wack.musicplayer.helper.mapper
 import com.wack.musicplayer.model.MusicDto
+import com.wack.musicplayer.model.MusicModel
 import com.wack.musicplayer.service.MusicService
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,7 +26,7 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private var binding: FragmentPlayerBinding? = null
     private var isWatchingPlayListView = true
     private lateinit var playListAdapter: PlayListAdapter
-    private var player: SimpleExoPlayer? = null
+    private var player: ExoPlayer? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,18 +36,51 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
         initPlayView(fragmentPlayerBinding)
         initPlayListBtn(fragmentPlayerBinding)
+        initPlayControlButtons(fragmentPlayerBinding)
         initRecyclerView(fragmentPlayerBinding)
         getVideoListFromServer()
     }
 
-    @OptIn(UnstableApi::class)
+    private fun initPlayControlButtons(fragmentPlayerBinding: FragmentPlayerBinding) {
+        fragmentPlayerBinding.playerPlayIv.setOnClickListener {
+            Log.d("PlayerFragment", "Play button clicked")
+            val player = this.player ?: return@setOnClickListener
+
+            if (player.isPlaying) {
+                player.pause()
+            } else {
+                player.play()
+            }
+        }
+
+        fragmentPlayerBinding.playerNextIv.setOnClickListener {
+        }
+
+        fragmentPlayerBinding.playerPrevIv.setOnClickListener {
+        }
+    }
+
     private fun initPlayView(fragmentPlayerBinding: FragmentPlayerBinding) {
 
         //초기화
         context?.let {
-            player = SimpleExoPlayer.Builder(it).build()
+            player = ExoPlayer.Builder(it).build()
         }
         fragmentPlayerBinding.playerView.player = player
+
+        binding?.let { binding ->
+            player?.addListener(object: Player.Listener{
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+
+                    if (isPlaying) {
+                        binding.playerPlayIv.setImageResource(R.drawable.ic_player_pause_48)
+                    } else {
+                        binding.playerPlayIv.setImageResource(R.drawable.ic_player_play_48)
+                    }
+                }
+            })
+        }
     }
 
     private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {
@@ -87,6 +121,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                                 val modelList = it.music.mapIndexed { index, musicEntity ->
                                     musicEntity.mapper(index.toLong())
                                 }
+
+                                setMusicList(modelList)
                                 playListAdapter.submitList(modelList)
                             }
                         }
@@ -96,6 +132,19 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                         }
                     })
             }
+    }
+
+    private fun setMusicList(modelList: List<MusicModel>) {
+        context?.let {
+            player?.addMediaItems(modelList.map { musicModel ->
+                MediaItem.Builder()
+                    .setMediaId(musicModel.id.toString())
+                    .setUri(musicModel.streamUrl)
+                    .build()
+            })
+            player?.prepare()
+            player?.play() // 재생 시작
+        }
     }
 
     companion object {

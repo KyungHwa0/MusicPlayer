@@ -197,7 +197,7 @@
         android:id="@+id/player_prev_iv"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:src="@drawable/ic_player_next_48"
+        android:src="@drawable/ic_player_previous_48"
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/player_play_iv"

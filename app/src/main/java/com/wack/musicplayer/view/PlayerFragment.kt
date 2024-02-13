@@ -10,6 +10,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.wack.musicplayer.R
+import com.wack.musicplayer.controller.PlayerController
 import com.wack.musicplayer.databinding.FragmentPlayerBinding
 import com.wack.musicplayer.helper.mapper
 import com.wack.musicplayer.model.MusicDto
@@ -23,8 +24,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
+    private var controller: PlayerController = PlayerController()
     private var binding: FragmentPlayerBinding? = null
-    private var isWatchingPlayListView = true
     private lateinit var playListAdapter: PlayListAdapter
     private var player: ExoPlayer? = null
 
@@ -54,9 +55,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
         }
 
         fragmentPlayerBinding.playerNextIv.setOnClickListener {
+            val nextMusic = controller.nextMusic() ?: return@setOnClickListener
+            playMusic(nextMusic)
         }
 
         fragmentPlayerBinding.playerPrevIv.setOnClickListener {
+            val prevMusic = controller.prevMusic() ?: return@setOnClickListener
+            playMusic(prevMusic)
         }
     }
 
@@ -85,7 +90,8 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private fun initRecyclerView(fragmentPlayerBinding: FragmentPlayerBinding) {
         playListAdapter = PlayListAdapter {
-            //todo 음악 재생
+            //음악 재생
+            playMusic(it)
         }
 
         fragmentPlayerBinding.playListRv.apply {
@@ -96,11 +102,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
     private fun initPlayListBtn(fragmentPlayerBinding: FragmentPlayerBinding) {
         fragmentPlayerBinding.playerListIv.setOnClickListener {
-            //todo 만약에 서버에서 데이터가 다 불러오지 않은 상태 일 때
-            fragmentPlayerBinding.playerViewGroup.isVisible = isWatchingPlayListView
-            fragmentPlayerBinding.playListViewGroup.isVisible = isWatchingPlayListView.not()
+            //서버에서 데이터가 다 불러오지 않은 상태 일 때
+            if (controller.currentPosition == -1) return@setOnClickListener
 
-            isWatchingPlayListView =! isWatchingPlayListView
+            fragmentPlayerBinding.playerViewGroup.isVisible = controller.isWatchingPlayListView
+            fragmentPlayerBinding.playListViewGroup.isVisible = controller.isWatchingPlayListView.not()
+
+            controller.isWatchingPlayListView =! controller.isWatchingPlayListView
         }
     }
 
@@ -117,13 +125,12 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                         override fun onResponse(call: Call<MusicDto>, response: Response<MusicDto>) {
                             Log.d("PlayerFragment", "${response.body()}")
 
-                            response.body()?.let {
-                                val modelList = it.music.mapIndexed { index, musicEntity ->
-                                    musicEntity.mapper(index.toLong())
-                                }
+                            response.body()?.let { musicDto ->
 
-                                setMusicList(modelList)
-                                playListAdapter.submitList(modelList)
+                                controller = musicDto.mapper()
+
+                                setMusicList(controller.getAdapterModels())
+                                playListAdapter.submitList(controller.getAdapterModels())
                             }
                         }
 
@@ -143,8 +150,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     .build()
             })
             player?.prepare()
-            player?.play() // 재생 시작
         }
+    }
+
+    private fun playMusic(musicModel: MusicModel) {
+        controller.updateCurrentPosition(musicModel)
+        player?.seekTo(controller.currentPosition, 0)
+        player?.play()
     }
 
     companion object {

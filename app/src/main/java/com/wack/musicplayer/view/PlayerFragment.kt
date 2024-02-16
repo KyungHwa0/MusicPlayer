@@ -84,6 +84,14 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                         binding.playerPlayIv.setImageResource(R.drawable.ic_player_play_48)
                     }
                 }
+
+                override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                    super.onMediaItemTransition(mediaItem, reason)
+
+                    val newIndex = mediaItem?.mediaId ?: return
+                    controller.currentPosition = newIndex.toInt()
+                    playListAdapter.submitList(controller.getAdapterModels())
+                }
             })
         }
     }

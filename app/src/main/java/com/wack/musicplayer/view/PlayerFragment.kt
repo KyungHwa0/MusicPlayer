@@ -22,6 +22,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class PlayerFragment : Fragment(R.layout.fragment_player) {
 
@@ -29,6 +30,10 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
     private var binding: FragmentPlayerBinding? = null
     private lateinit var playListAdapter: PlayListAdapter
     private var player: ExoPlayer? = null
+
+    private val updateSeekRunnable = Runnable {
+        updateSeek()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -86,6 +91,13 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     }
                 }
 
+                // seek
+                override fun onPlaybackStateChanged(playbackState: Int) {
+                    super.onPlaybackStateChanged(playbackState)
+
+                    updateSeek()
+                }
+
                 override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                     super.onMediaItemTransition(mediaItem, reason)
 
@@ -98,6 +110,40 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
                     playListAdapter.submitList(controller.getAdapterModels())
                 }
             })
+        }
+    }
+
+    private fun updateSeek() {
+        val player = this.player ?: return
+        val duration = if (player.duration >= 0) player.duration else 0
+        val position = player.currentPosition
+
+        //UI update
+        updateSeekUi(duration, position)
+
+        val state = player.playbackState
+
+        view?.removeCallbacks(updateSeekRunnable)
+        if (state != Player.STATE_IDLE && state != Player.STATE_ENDED) {
+            view?.postDelayed(updateSeekRunnable, 1000)
+        }
+    }
+
+    private fun updateSeekUi(duration:Long, position: Long) {
+        binding?.let { binding ->
+
+            binding.playListSeekbar.max = (duration / 1000).toInt()
+            binding.playListSeekbar.progress = (position / 1000).toInt()
+
+            binding.playerSeekbar.max = (duration / 1000).toInt()
+            binding.playerSeekbar.progress = (position / 1000).toInt()
+
+            binding.playTimeTv.text = String.format("%02d:%02d",
+                TimeUnit.MINUTES.convert(position, TimeUnit.MILLISECONDS),
+                (position / 1000) % 60)
+            binding.totalTimeTv.text = String.format("%02d:%02d",
+                TimeUnit.MINUTES.convert(duration, TimeUnit.MILLISECONDS),
+                (duration / 1000) % 60)
         }
     }
 

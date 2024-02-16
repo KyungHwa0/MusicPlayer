@@ -9,6 +9,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.wack.musicplayer.R
 import com.wack.musicplayer.controller.PlayerController
 import com.wack.musicplayer.databinding.FragmentPlayerBinding
@@ -90,9 +91,25 @@ class PlayerFragment : Fragment(R.layout.fragment_player) {
 
                     val newIndex = mediaItem?.mediaId ?: return
                     controller.currentPosition = newIndex.toInt()
+
+                    // Player Update
+                    updatePlayerView(controller.currentMusicModel())
+
                     playListAdapter.submitList(controller.getAdapterModels())
                 }
             })
+        }
+    }
+
+    private fun updatePlayerView(currentMusicModel: MusicModel?) {
+        currentMusicModel ?: return
+
+        binding?.let { binding ->
+            binding.trackTitleTv.text = currentMusicModel.track
+            binding.trackSingerTv.text = currentMusicModel.singer
+            Glide.with(binding.trackCoverIv.context)
+                .load(currentMusicModel.coverUrl)
+                .into(binding.trackCoverIv)
         }
     }
 

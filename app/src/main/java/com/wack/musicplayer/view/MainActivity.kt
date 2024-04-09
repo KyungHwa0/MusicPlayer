@@ -3,14 +3,17 @@ package com.wack.musicplayer.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.wack.musicplayer.R
+import com.wack.musicplayer.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         supportFragmentManager.beginTransaction()
-            .replace(R.id.frm_container, PlayerFragment.newInstance())
+            .replace(binding.frmContainer.id, PlayerFragment.newInstance())
             .commit()
     }
 }
